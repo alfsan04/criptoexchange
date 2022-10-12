@@ -36,20 +36,48 @@
                 </tr>
             </table>
         </div>
-        <!--<article id="movement_detail" class="inactive">
+        <article id="movement_detail" class="inactive">
             <form id="movement_form">
-                <input type="date" name="date" id="date">
-                <input type="text" id="concept" name="concept" placeholder="En qué te has gastado o cobrado">
-                <input type="number" name="quantity" id="quantity" step="0.01" placeholder="Cuánto has gastado o cobrado">
+                    <table>
+                        <tr>
+                            <td>
+                                <label for="lang">Moneda origen</label>
+                                <select name="lenguajes" id="lang">
+                                    <option value="eur">EUR</option>
+                                    <option value="btc">BTC</option>
+                                    <option value="eth">ETH</option>
+                                    <option value="usdt">USDT</option>
+                                    <option value="bnb">BNB</option>
+                                    <option value="xrp">XRP</option>
+                                    <option value="ada">ADA</option>
+                                    <option value="dot">DOT</option>
+                                    <option value="matic">MATIC</option>
+                                </select>
+                                <input type="number" name="cantidad_from" id="moneda_from" step="0.01" placeholder="Cuánto quieres cambiar">
+                            </td>
+                            <td>
+                                <label for="lang">Moneda destino</label>
+                                <select name="lenguajes" id="lang">
+                                    <option value="eur">EUR</option>
+                                    <option value="btc">BTC</option>
+                                    <option value="eth">ETH</option>
+                                    <option value="usdt">USDT</option>
+                                    <option value="bnb">BNB</option>
+                                    <option value="xrp">XRP</option>
+                                    <option value="ada">ADA</option>
+                                    <option value="dot">DOT</option>
+                                    <option value="matic">MATIC</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
                 <div class="grid">
                     <button id="btn_cerrar">Cerrar</button>
-                    <button id="btn_aceptar">Aceptar</button>
-                    <button class="inactive" id="btn_borrar">Borrar</button>
-                    <button class="inactive" id="btn_modificar">Modificar</button>
+                    <button id="btn_aceptar">Intercambiar</button>
                 </div>
                 
             </form>
-        </article>-->
+        </article>
     </section>
     <footer>
         <div class="container">
