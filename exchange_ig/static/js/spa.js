@@ -9,6 +9,8 @@ function peticion_todos_handler(){ //handler se traduce como manejador
             const la_tabla = document.querySelector("#movements_table")
             const movimientos = los_datos.data
 
+            clear_tab()
+
             for (let i=0; i<movimientos.length; i++) {
                 item = movimientos[i]
                 const trow = document.createElement("tr")
@@ -42,6 +44,36 @@ function peticion_todos_handler(){ //handler se traduce como manejador
     }
 }
 
+function clear_tab(){
+    const la_tabla = document.querySelector("#movements_table")
+    la_tabla.innerHTML = ""
+    const trow = document.createElement("tr")
+    
+    const thdate = document.createElement("th")
+    const thtime = document.createElement("th")
+    const thmoneda_from = document.createElement("th")
+    const thcantidad_from = document.createElement("th")
+    const thmoneda_to = document.createElement("th")
+    const thcantidad_to = document.createElement("th")
+
+    thdate.innerHTML = "Fecha"
+    thtime.innerHTML = "Hora"
+    thmoneda_from.innerHTML = "From"
+    thcantidad_from.innerHTML = "Cantidad"
+    thmoneda_to.innerHTML = "From"
+    thcantidad_to.innerHTML = "Cantidad"
+
+    trow.appendChild(thdate)
+    trow.appendChild(thtime)
+    trow.appendChild(thmoneda_from)                 
+    trow.appendChild(thcantidad_from)
+    trow.appendChild(thmoneda_to)
+    trow.appendChild(thcantidad_to)
+
+    la_tabla.appendChild(trow)
+
+}
+
 
 
 function peticion_alta_handler() {
@@ -69,21 +101,42 @@ function altaMovimiento(ev) {
     
     
     //validamos las respuestas del formulario
-    /*if (concept === "") {
-        alert("Debes informar el concepto")
-        return
-    }
-
-    if (quantity == 0 || quantity === "") {
-        alert("Debes informar una cantidad distinta de cero")
-        return
-    }
-
     const hoy = new Date().toISOString().split('T')[0] //obtengo la fecha de hoy en formato ISO, lo parto por la letra T de time que separa fecha y hora y me quedo solo con la fecha, posición 0 de la lista
     if (!date || date > hoy) { //!date es not date en javascript
         alert("Debes poner una fecha y no debe ser del futuro")
         return
-    }*/
+    }
+
+    if (moneda_from === moneda_to){
+        alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino")
+        return
+    }
+    if (time === ""){
+        alert("Debes informar la hora")
+        return
+    }
+    
+    if (moneda_from === "") {
+        alert("Debes elegir una moneda")
+        return
+    }
+
+    if (cantidad_from == 0 || cantidad_from === "") {
+        alert("Debes informar una cantidad distinta de cero")
+        return
+    }
+
+    if (moneda_to === "") {
+        alert("Debes elegir una moneda")
+        return
+    }
+
+    if (cantidad_to == 0 || cantidad_to === "") {
+        alert("Debes informar una cantidad distinta de cero")
+        return
+    }
+
+    
 
     peticion_alta.open("POST", "http://localhost:5000/api/v1.0/new", true)
     peticion_alta.onload = peticion_alta_handler
