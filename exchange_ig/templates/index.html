@@ -18,12 +18,6 @@
         <h1>
             Invierte en cripto y cambia tus criptos
         </h1>
-        <nav>
-            <ul></ul>
-            <ul>
-                <li><a href="#" role="button" id="btn_crear">Nuevo</a></li>
-            </ul>
-        </nav>
         <div id="movements_list">
             <table id="movements_table">
                 <tr>
@@ -40,40 +34,45 @@
             <form id="movement_form">
                     <table>
                         <tr>
+                            <td><input type="date" name="date" id="date" required></td>
+                            <td><input type="datetime" name="time" id="time" required></td>
+                        </tr>
+                        <tr>
                             <td>
-                                <label for="lang">Moneda origen</label>
-                                <select name="lenguajes" id="lang">
-                                    <option value="eur">EUR</option>
-                                    <option value="btc">BTC</option>
-                                    <option value="eth">ETH</option>
-                                    <option value="usdt">USDT</option>
-                                    <option value="bnb">BNB</option>
-                                    <option value="xrp">XRP</option>
-                                    <option value="ada">ADA</option>
-                                    <option value="dot">DOT</option>
-                                    <option value="matic">MATIC</option>
+                                <label for="moneda_from">Moneda origen</label>
+                                <select name="moneda_from" id="moneda_from" required>
+                                    <option value="EUR">EUR</option>
+                                    <option value="BTC">BTC</option>
+                                    <option value="ETH">ETH</option>
+                                    <option value="USDT">USDT</option>
+                                    <option value="BNB">BNB</option>
+                                    <option value="XRP">XRP</option>
+                                    <option value="ADA">ADA</option>
+                                    <option value="DOT">DOT</option>
+                                    <option value="MATIC">MATIC</option>
                                 </select>
-                                <input type="number" name="cantidad_from" id="moneda_from" step="0.01" placeholder="Cuánto quieres cambiar">
+                                <input type="number" name="cantidad_from" id="cantidad_from" step="0.01" placeholder="Cuánto quieres cambiar" required>
                             </td>
                             <td>
-                                <label for="lang">Moneda destino</label>
-                                <select name="lenguajes" id="lang">
-                                    <option value="eur">EUR</option>
-                                    <option value="btc">BTC</option>
-                                    <option value="eth">ETH</option>
-                                    <option value="usdt">USDT</option>
-                                    <option value="bnb">BNB</option>
-                                    <option value="xrp">XRP</option>
-                                    <option value="ada">ADA</option>
-                                    <option value="dot">DOT</option>
-                                    <option value="matic">MATIC</option>
+                                <label for="moneda_to">Moneda destino</label>
+                                <select name="moneda_to" id="moneda_to" required>
+                                    <option value="EUR">EUR</option>
+                                    <option value="BTC">BTC</option>
+                                    <option value="ETH">ETH</option>
+                                    <option value="USDT">USDT</option>
+                                    <option value="BNB">BNB</option>
+                                    <option value="XRP">XRP</option>
+                                    <option value="ADA">ADA</option>
+                                    <option value="DOT">DOT</option>
+                                    <option value="MATIC">MATIC</option>
                                 </select>
+                                <input type="number" name="cantidad_to" id="cantidad_to" step="0.01" placeholder="Cuánto quieres cambiar" required>
                             </td>
                         </tr>
                     </table>
                 <div class="grid">
                     <button id="btn_cerrar">Cerrar</button>
-                    <button id="btn_aceptar">Intercambiar</button>
+                    <button id="btn_intercambiar">Intercambiar</button>
                 </div>
                 
             </form>

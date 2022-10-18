@@ -3,13 +3,13 @@ from flask import render_template, jsonify, request
 import sqlite3
 from http import HTTPStatus
 
-from exchange_ig.models import select_all
+from exchange_ig.models import select_all, insert
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/api/v1.0/all")
+@app.route("/api/v1.0/all", methods=["GET"])
 def all_movements():
     try:
         registros = select_all()
@@ -27,3 +27,21 @@ def all_movements():
                 "data": str(e)
             }
         ), 400 #añadimos el tipo de error que queremos
+
+@app.route("/api/v1.0/new", methods=["POST"])
+def new():
+    registro = request.json
+    try:
+        insert([registro["date"], registro["time"], registro["moneda_from"], registro["cantidad_from"], registro["moneda_to"], registro["cantidad_to"]])
+        return jsonify(
+            {
+                "status": "success"
+            }
+        ), 201
+    except sqlite3.Error as e:
+        return jsonify(
+            {
+                "status": "Error",
+                "data": str(e)
+            }
+        ), HTTPStatus.BAD_REQUEST
