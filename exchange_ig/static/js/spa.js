@@ -91,9 +91,6 @@ function peticion_alta_handler() {
 
 function altaMovimiento(ev) {
     ev.preventDefault()
-
-    const date = document.querySelector("#date").value
-    const time = document.querySelector("#time").value
     const moneda_from = document.querySelector("#moneda_from").value
     const cantidad_from = document.querySelector("#cantidad_from").value
     const moneda_to = document.querySelector("#moneda_to").value
@@ -101,18 +98,10 @@ function altaMovimiento(ev) {
     
     
     //validamos las respuestas del formulario
-    const hoy = new Date().toISOString().split('T')[0] //obtengo la fecha de hoy en formato ISO, lo parto por la letra T de time que separa fecha y hora y me quedo solo con la fecha, posición 0 de la lista
-    if (!date || date > hoy) { //!date es not date en javascript
-        alert("Debes poner una fecha y no debe ser del futuro")
-        return
-    }
+
 
     if (moneda_from === moneda_to){
         alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino")
-        return
-    }
-    if (time === ""){
-        alert("Debes informar la hora")
         return
     }
     
@@ -143,7 +132,7 @@ function altaMovimiento(ev) {
     peticion_alta.onerror = function() { alert("No se ha podido completar la carga de movimientos") }
     peticion_alta.setRequestHeader("Content-Type", "application/json") //siempre hay que ponerlo para que la petición se interprete como un json
     
-    const data_json = JSON.stringify({date: date, time: time, moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: cantidad_to})
+    const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: cantidad_to})
     peticion_alta.send(data_json)
 }
 

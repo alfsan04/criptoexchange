@@ -32,7 +32,7 @@ def all_movements():
 def new():
     registro = request.json
     try:
-        insert([registro["date"], registro["time"], registro["moneda_from"], registro["cantidad_from"], registro["moneda_to"], registro["cantidad_to"]])
+        insert([0, 0, registro["moneda_from"], registro["cantidad_from"], registro["moneda_to"], registro["cantidad_to"]])
         return jsonify(
             {
                 "status": "success"
