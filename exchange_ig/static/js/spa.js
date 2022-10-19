@@ -53,12 +53,13 @@ function peticion_todos_handler(){ //handler se traduce como manejador
 
                 const tdmoneda = document.createElement("td")
                 const tdcantidad = document.createElement("td")
+                if (cantidades[monedas[i]] != 0) {
+                    tdmoneda.innerHTML = monedas[i]
+                    tdcantidad.innerHTML = cantidades[monedas[i]]
 
-                tdmoneda.innerHTML = monedas[i]
-                tdcantidad.innerHTML = cantidades[monedas[i]]
-
-                trow.appendChild(tdmoneda)
-                trow.appendChild(tdcantidad)
+                    trow.appendChild(tdmoneda)
+                    trow.appendChild(tdcantidad)
+                }
                 
                 cantidad_disponible.appendChild(trow)
             }
