@@ -7,12 +7,21 @@ function peticion_todos_handler(){ //handler se traduce como manejador
 
             const los_datos = JSON.parse(this.responseText)
             const la_tabla = document.querySelector("#movements_table")
+            const cantidad_disponible = document.querySelector("#cantidades_disponibles")
             const movimientos = los_datos.data
+            var cantidades = {};
+            let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
+            for (let i=0; i<monedas.length; i++) {
+                cantidades[monedas[i]] = 0;
+            }
 
             clear_tab()
 
             for (let i=0; i<movimientos.length; i++) {
                 item = movimientos[i]
+                
+                cantidades[item.moneda_from] -= item.cantidad_from
+                cantidades[item.moneda_to] += item.cantidad_to
                 const trow = document.createElement("tr")
 
                 const tddate = document.createElement("td")
@@ -37,6 +46,21 @@ function peticion_todos_handler(){ //handler se traduce como manejador
                 trow.appendChild(tdcantidad_to)
                 
                 la_tabla.appendChild(trow)
+            }
+
+            for (let i= 0; i<monedas.length; i++) {
+                const trow = document.createElement("tr")
+
+                const tdmoneda = document.createElement("td")
+                const tdcantidad = document.createElement("td")
+
+                tdmoneda.innerHTML = monedas[i]
+                tdcantidad.innerHTML = cantidades[monedas[i]]
+
+                trow.appendChild(tdmoneda)
+                trow.appendChild(tdcantidad)
+                
+                cantidad_disponible.appendChild(trow)
             }
         } else {
             alert("Se ha producido un error en la consulta de movimientos")
@@ -71,6 +95,11 @@ function clear_tab(){
     trow.appendChild(thcantidad_to)
 
     la_tabla.appendChild(trow)
+
+    const cantidad_disponible = document.querySelector("#cantidades_disponibles")
+    cantidad_disponible.innerHTML = ""
+    const trow2 = document.createElement("tr")
+    cantidad_disponible.appendChild(trow2)
 
 }
 
