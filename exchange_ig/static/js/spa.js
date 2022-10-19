@@ -1,6 +1,9 @@
 peticion_todos = new XMLHttpRequest()
 peticion_alta = new XMLHttpRequest()
 
+cantidades = {};
+let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
+
 function peticion_todos_handler(){ //handler se traduce como manejador
     if (this.readyState === 4) {
         if (this.status === 200){
@@ -9,11 +12,12 @@ function peticion_todos_handler(){ //handler se traduce como manejador
             const la_tabla = document.querySelector("#movements_table")
             const cantidad_disponible = document.querySelector("#cantidades_disponibles")
             const movimientos = los_datos.data
-            var cantidades = {};
-            let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
+
+            cantidades = {};
             for (let i=0; i<monedas.length; i++) {
                 cantidades[monedas[i]] = 0;
-            }
+}
+            
 
             clear_tab()
 
@@ -126,9 +130,11 @@ function altaMovimiento(ev) {
     const moneda_to = document.querySelector("#moneda_to").value
     const cantidad_to = document.querySelector("#cantidad_to").value
     
-    
     //validamos las respuestas del formulario
-
+    if (moneda_from != "EUR" && Number(cantidad_from) > cantidades[moneda_from]) {
+        alert("No tienes suficientes fondos en " + moneda_from + " para realizar la operación")
+        return
+    }
 
     if (moneda_from === moneda_to){
         alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino")
