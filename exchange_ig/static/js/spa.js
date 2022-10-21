@@ -1,7 +1,7 @@
 peticion_todos = new XMLHttpRequest()
 peticion_alta = new XMLHttpRequest()
 
-cantidades = {};
+cantidades = {}
 let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
 
 function peticion_todos_handler(){ //handler se traduce como manejador
@@ -16,16 +16,20 @@ function peticion_todos_handler(){ //handler se traduce como manejador
             cantidades = {};
             for (let i=0; i<monedas.length; i++) {
                 cantidades[monedas[i]] = 0;
-}
+            }
             
-
             clear_tab()
+            
 
             for (let i=0; i<movimientos.length; i++) {
                 item = movimientos[i]
+                if (cantidades.hasOwnProperty(item.moneda_from)) {
+                    cantidades[item.moneda_from] -= item.cantidad_from
+                }
+                if (cantidades.hasOwnProperty(item.moneda_to)) {
+                    cantidades[item.moneda_to] += item.cantidad_to
+                }
                 
-                cantidades[item.moneda_from] -= item.cantidad_from
-                cantidades[item.moneda_to] += item.cantidad_to
                 const trow = document.createElement("tr")
 
                 const tddate = document.createElement("td")
@@ -57,7 +61,7 @@ function peticion_todos_handler(){ //handler se traduce como manejador
 
                 const tdmoneda = document.createElement("td")
                 const tdcantidad = document.createElement("td")
-                if (cantidades[monedas[i]] != 0) {
+                if (cantidades[monedas[i]] && cantidades[monedas[i]] != 0) {
                     tdmoneda.innerHTML = monedas[i]
                     tdcantidad.innerHTML = cantidades[monedas[i]]
 
@@ -67,10 +71,44 @@ function peticion_todos_handler(){ //handler se traduce como manejador
                 
                 cantidad_disponible.appendChild(trow)
             }
+            invest_state()
         } else {
             alert("Se ha producido un error en la consulta de movimientos")
         }
     }
+}
+
+//revisar la función, no funciona
+function invest_state(){
+    document.querySelector("#cantidad_invertida").innerHTML = ""
+    document.querySelector("#cantidad_recuperada").innerHTML = ""
+    document.querySelector("#valor_compra").innerHTML = ""
+    document.querySelector("#valor_actual").innerHTML = ""
+    
+    estado_inversion = {"invertido": 0, "recuperado": 0, "valor_compra": 0, "valor_actual": 0}
+    //actualizar los valores, falta conseguir invertido, recuperado y valor de compra, es necesario recuperar los movimientos, por lo que hay que llamar al servidor
+    /*for (let i=0; i<movimientos.length; i++) {
+        item = movimientos[i]
+        if (item.moneda_from === "EUR") {
+            estado_inversion["invertido"] += item.cantidad_from
+        }else if (item.moneda_to === "EUR") {
+            estado_inversion["recuperado"] += item.cantidad_to
+        }
+    }
+    alert(estado_inversion.invertido)
+    estado_inversion["valor_compra"] = estado_inversion["invertido"] - estado_inversion["recuperado"]*/
+    
+    let valores = Object.values(cantidades)
+
+    for (let i=0; i<valores.length; i++){
+        estado_inversion["valor_actual"] += valores[i]
+    }
+        
+    document.querySelector("#cantidad_invertida").innerHTML = estado_inversion["invertido"]
+    document.querySelector("#cantidad_recuperada").innerHTML = estado_inversion["recuperado"]
+    document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"]
+    document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"]
+
 }
 
 function clear_tab(){
