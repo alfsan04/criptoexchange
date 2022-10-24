@@ -1,5 +1,6 @@
 peticion_todos = new XMLHttpRequest()
 peticion_alta = new XMLHttpRequest()
+peticion_valor_actual = new XMLHttpRequest()
 
 cantidades = {}
 let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
@@ -78,39 +79,6 @@ function peticion_todos_handler(){ //handler se traduce como manejador
     }
 }
 
-//revisar la función, no funciona
-function invest_state(){
-    document.querySelector("#cantidad_invertida").innerHTML = ""
-    document.querySelector("#cantidad_recuperada").innerHTML = ""
-    document.querySelector("#valor_compra").innerHTML = ""
-    document.querySelector("#valor_actual").innerHTML = ""
-    
-    estado_inversion = {"invertido": 0, "recuperado": 0, "valor_compra": 0, "valor_actual": 0}
-    //actualizar los valores, falta conseguir invertido, recuperado y valor de compra, es necesario recuperar los movimientos, por lo que hay que llamar al servidor
-    /*for (let i=0; i<movimientos.length; i++) {
-        item = movimientos[i]
-        if (item.moneda_from === "EUR") {
-            estado_inversion["invertido"] += item.cantidad_from
-        }else if (item.moneda_to === "EUR") {
-            estado_inversion["recuperado"] += item.cantidad_to
-        }
-    }
-    alert(estado_inversion.invertido)
-    estado_inversion["valor_compra"] = estado_inversion["invertido"] - estado_inversion["recuperado"]*/
-    
-    let valores = Object.values(cantidades)
-
-    for (let i=0; i<valores.length; i++){
-        estado_inversion["valor_actual"] += valores[i]
-    }
-        
-    document.querySelector("#cantidad_invertida").innerHTML = estado_inversion["invertido"]
-    document.querySelector("#cantidad_recuperada").innerHTML = estado_inversion["recuperado"]
-    document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"]
-    document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"]
-
-}
-
 function clear_tab(){
     const la_tabla = document.querySelector("#movements_table")
     la_tabla.innerHTML = ""
@@ -145,7 +113,6 @@ function clear_tab(){
     cantidad_disponible.appendChild(trow2)
 
 }
-
 
 
 function peticion_alta_handler() {
@@ -199,8 +166,6 @@ function altaMovimiento(ev) {
         return
     }
 
-    
-
     peticion_alta.open("POST", "http://localhost:5000/api/v1.0/new", true)
     peticion_alta.onload = peticion_alta_handler
     peticion_alta.onerror = function() { alert("No se ha podido completar la carga de movimientos") }
@@ -211,51 +176,56 @@ function altaMovimiento(ev) {
 }
 
 //función para hacer la petición al servidor y recibir todos los valores
-/*function peticion_actualizar_handler() {
+function peticion_invest_state_handler() {
     if (this.readyState === 4) {
         if (this.status === 201) {
-            peticion_todos.open("GET", "http://localhost:5000/api/v1.0/all", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
-            peticion_todos.onload = peticion_todos_handler
-            peticion_todos.onerror = function() { alert("No se ha podido completar la petición de movimientos") }
-            peticion_todos.send()
+            peticion_valor_actual.open("GET", "http://localhost:5000/api/v1.0/balance", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
+            peticion_valor_actual.onerror = function() { alert("No se ha podido completar la petición de movimientos") }
+            peticion_valor_actual.send()
         } else {
             alert("Se ha producido un error en el alta de movimientos")
         }
     }
-}*/
+}
 
 //revisar la función, no funciona
 function invest_state(){
-    document.querySelector("#cantidad_invertida").innerHTML = ""
-    document.querySelector("#cantidad_recuperada").innerHTML = ""
-    document.querySelector("#valor_compra").innerHTML = ""
-    document.querySelector("#valor_actual").innerHTML = ""
-    
-    estado_inversion = {"invertido": 0, "recuperado": 0, "valor_compra": 0, "valor_actual": 0}
-    //actualizar los valores, falta conseguir invertido, recuperado y valor de compra, es necesario recuperar los movimientos, por lo que hay que llamar al servidor
-    /*for (let i=0; i<movimientos.length; i++) {
-        item = movimientos[i]
-        if (item.moneda_from === "EUR") {
-            estado_inversion["invertido"] += item.cantidad_from
-        }else if (item.moneda_to === "EUR") {
-            estado_inversion["recuperado"] += item.cantidad_to
-        }
-    }
-    alert(estado_inversion.invertido)
-    estado_inversion["valor_compra"] = estado_inversion["invertido"] - estado_inversion["recuperado"]*/
-    
-    let valores = Object.values(cantidades)
 
-    for (let i=0; i<valores.length; i++){
-        estado_inversion["valor_actual"] += valores[i]
-    }
-        
-    document.querySelector("#cantidad_invertida").innerHTML = estado_inversion["invertido"]
-    document.querySelector("#cantidad_recuperada").innerHTML = estado_inversion["recuperado"]
-    document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"]
-    document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"]
+            
+            document.querySelector("#cantidad_invertida").innerHTML = ""
+            document.querySelector("#cantidad_recuperada").innerHTML = ""
+            document.querySelector("#valor_compra").innerHTML = ""
+            document.querySelector("#valor_actual").innerHTML = ""
+            
+            estado_inversion = {"invertido": 0, "recuperado": 0, "valor_compra": 0, "valor_actual": 0}
+            
+            
+            let valores = Object.values(cantidades)
 
-}
+            for (let i=0; i<valores.length; i++){
+                estado_inversion["valor_actual"] += valores[i]
+            }
+            
+            //no consigo hacer la petición, pese a que la ruta si devuelve lo que necesito
+            
+            /*peticion_valor_actual.open("GET", "http://localhost:5000/api/v1.0/balance", true)
+            peticion_valor_actual.onreadystatechange = function(){
+                //peticion_valor_actual.onload = peticion_alta_handler
+                const los_datos = JSON.parse(this.responseText)
+                const estado = los_datos.data
+            }
+
+            alert(estado)
+            
+            const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: cantidad_to})
+            peticion_alta.send(data_json)*/
+                
+            document.querySelector("#cantidad_invertida").innerHTML = estado_inversion["invertido"]
+            document.querySelector("#cantidad_recuperada").innerHTML = estado_inversion["recuperado"]
+            document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"]
+            document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"]
+            
+} 
 
 window.onload = function() {
     peticion_todos.open("GET", "http://localhost:5000/api/v1.0/all", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando

@@ -3,7 +3,7 @@ from flask import render_template, jsonify, request
 import sqlite3
 from http import HTTPStatus
 
-from exchange_ig.models import select_all, insert
+from exchange_ig.models import my_investment_portfolio, select_all, insert
 
 @app.route("/")
 def index():
@@ -45,3 +45,22 @@ def new():
                 "data": str(e)
             }
         ), HTTPStatus.BAD_REQUEST
+
+@app.route("/api/v1.0/balance", methods=["GET"])
+def balance():
+    try:
+        valor_compra = my_investment_portfolio()
+
+        return jsonify(
+            {
+                "data": valor_compra,
+                "status": "OK"
+            }
+        )
+    except sqlite3.Error as e:
+        return jsonify(
+            {
+                "status": "Error",
+                "data": str(e)
+            }
+        ), 400
