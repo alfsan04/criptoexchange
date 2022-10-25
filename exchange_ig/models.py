@@ -22,6 +22,9 @@ def select_all():
 
     conn.close()
 
+    for elemento in resultado:
+        elemento["cantidad_to"] = round(elemento["cantidad_to"],8)
+
     return resultado
 
 def obtain_change(cripto1,cripto2):
@@ -44,8 +47,14 @@ def my_investment_portfolio():
     total_balance = 0
     portfolio = []
     cartera = select_all()
+    euros_invertidos = 0
+    euros_recuperados = 0
     for elemento in cartera:
         contenida = False
+        if elemento["moneda_from"] == "EUR":
+            euros_invertidos += elemento["cantidad_from"]
+        if elemento["moneda_to"] == "EUR":
+            euros_recuperados += elemento["cantidad_to"]
         for posicion in portfolio:
             if posicion[0] == elemento["moneda_from"]:
                 posicion[1] -= elemento["cantidad_from"]
@@ -69,7 +78,7 @@ def my_investment_portfolio():
         posicion[3] = posicion[1]*((1/change_eur_usd)*posicion[2])
         total_balance += posicion[3]
 
-    return total_balance
+    return {"invertido": round(euros_invertidos,2), "recuperado": round(euros_recuperados,2), "valor_compra": round(euros_invertidos-euros_recuperados,2), "valor_actual": round(total_balance,2)}
             
 
 
