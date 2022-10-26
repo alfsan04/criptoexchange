@@ -12,8 +12,12 @@ body {
     margin: 0;
 }
 
+.columnas_iguales {
+    table-layout: fixed;
+}
+
 .inactive {
-    /*display: none;*/
+    display: none;
 }
 
 #en_paralelo {
@@ -27,6 +31,7 @@ grid-template-columns: 70% 30%;
     grid-column-start: 1;
     grid-column-end: 2;
 }
+
 #investment {
     grid-column-start: 2;
     grid-column-end: 2;
@@ -43,3 +48,4 @@ grid-template-columns: 70% 30%;
 #cantidades_disponibles {
     font-size: 0.8em;
 }
+

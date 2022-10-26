@@ -1,73 +1,72 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/pico.css">
-    <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="/static/js/spa.js"></script>
-    <title>Criptoexchange</title>
-</head>
-<body>
-    <header>
-        <div class="container">
-            Cripto Exchange
-        </div>
-    </header>
-    <section class="container">
-        <h1>
-            Invierte en cripto y cambia tus criptos
-        </h1>
-        <section id = "en_paralelo">
-
-        <article id="movements">
-            <table id="movements_table">
-                <tr>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                    <th>Desde</th>
-                    <th>Cantidad</th>
-                    <th>Hasta</th>
-                    <th>Cantidad</th>
-                </tr>
-            </table>
-        </article>
-        <article id="investment">
-            <h3 id="small_title">Cartera de criptomonedas:</h3>
-            <table id="cantidades_disponibles">
-                <tr></tr>
-            </table>
-            <table id="estado_inversion">
-                <tr>
-                    <th id="estado_inversion">Invertido:</th>
-                    <td id="cantidad_invertida"></td>
-                </tr>
-
-                <tr>
-                    <th id="estado_inversion">Recuperado:</th>
-                    <td id="cantidad_recuperada"></td>
-                </tr>
-
-                <tr>
-                    <th id="estado_inversion">V. de compra:</th>
-                    <td id="valor_compra"></td>
-                </tr>
-
-                <tr>
-                    <th id="estado_inversion">V. actual:</th>
-                    <td id="valor_actual"></td>
-                </tr>
-
-            </table>
-            <button id="btn_actualizar_cartera">Actualizar</button>
-        </article>
-        </section>
-        </div>
-        <article id="movement_detail" class="inactive">
-            <form id="movement_form">
-                    <table>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/static/css/pico.css">
+        <link rel="stylesheet" href="/static/css/styles.css">
+        <script src="/static/js/spa.js"></script>
+        <title>Criptoexchange</title>
+    </head>
+    <body>
+        <header>
+            <div class="container">
+                Cripto Exchange
+            </div>
+        </header>
+        <section class="container">
+            <h1>
+                Invierte en cripto y cambia tus criptos
+            </h1>
+            <section id = "en_paralelo">
+                <article id="movements">
+                    <table id="movements_table">
                         <tr>
-                            <td>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Desde</th>
+                            <th>Cantidad</th>
+                            <th>Hasta</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </table>
+                </article>
+                <article id="investment">
+                    <h3 id="small_title">Cartera de criptomonedas:</h3>
+                        <table id="cantidades_disponibles">
+                            <tr></tr>
+                        </table>
+                    <table id="estado_inversion">
+                        <tr>
+                            <th id="estado_inversion">Invertido:</th>
+                            <td id="cantidad_invertida"></td>
+                        </tr>
+
+                        <tr>
+                            <th id="estado_inversion">Recuperado:</th>
+                            <td id="cantidad_recuperada"></td>
+                        </tr>
+
+                        <tr>
+                            <th id="estado_inversion">V. de compra:</th>
+                            <td id="valor_compra"></td>
+                        </tr>
+
+                        <tr>
+                            <th id="estado_inversion">V. actual:</th>
+                            <td id="valor_actual"></td>
+                        </tr>
+
+                    </table>
+                    <button id="btn_actualizar_cartera">Actualizar</button>
+                    <button id="btn_nuevo_movimiento">+</button>
+                </article>
+            </section>
+            <article id="movement_detail" class="inactive">
+                <form id="movement_form">
+                    <table style="table-layout:fixed;">
+                        <tr>
+                            <td id="la_mitad">
                                 <label for="moneda_from">Moneda origen</label>
                                 <select name="moneda_from" id="moneda_from" required>
                                     <option value="">Elige moneda</option>
@@ -81,9 +80,8 @@
                                     <option value="DOT">DOT</option>
                                     <option value="MATIC">MATIC</option>
                                 </select>
-                                <input type="number" name="cantidad_from" id="cantidad_from" step="0.01" placeholder="Cuánto quieres cambiar" required>
                             </td>
-                            <td>
+                            <td id="la_mitad">
                                 <label for="moneda_to">Moneda destino</label>
                                 <select name="moneda_to" id="moneda_to" required>
                                     <option value="">Elige moneda</option>
@@ -97,23 +95,29 @@
                                     <option value="DOT">DOT</option>
                                     <option value="MATIC">MATIC</option>
                                 </select>
-                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" name="cantidad_from" id="cantidad_from" step="0.01" placeholder="Cuánto quieres cambiar" required>
+                            </td>
+                            <td>
+                                <p>Q:</p>
+                                <p>P.U.:</p>
                             </td>
                         </tr>
                     </table>
-                <div class="grid">
-                    <button id="btn_cerrar">Cerrar</button>
-                    <button id="btn_intercambiar">Intercambiar</button>
-                </div>
-                
-            </form>
-        </article>
-    </section>
-    <footer>
-        <div class="container">
-            &copy; 2022 - Hecho con amor (y un poco de estrés) por Alfredo Sánchez
-        </div>
-        
-    </footer>
-</body>
+                    <div class="grid">
+                        <button id="btn_cerrar">Cerrar</button>
+                        <button id="btn_intercambiar">Intercambiar</button>
+                    </div>
+                </form>
+            </article>
+        </section>
+        <footer>
+            <div class="container">
+                &copy; 2022 - Hecho con amor (y un poco de estrés) por Alfredo Sánchez
+            </div>
+        </footer>
+    </body>
 </html>

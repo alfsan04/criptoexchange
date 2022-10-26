@@ -199,6 +199,17 @@ function invest_state(){
             
 } 
 
+function estado_boton() {
+    const btn_nuevo_movimiento = document.querySelector("#btn_nuevo_movimiento")
+    if (btn_nuevo_movimiento.innerHTML == "+") {
+        btn_nuevo_movimiento.innerHTML = "-"
+        document.querySelector("#movement_detail").classList.remove("inactive")
+    } else {
+        btn_nuevo_movimiento.innerHTML = "+"
+        document.querySelector("#movement_detail").classList.add("inactive")
+    }
+}
+
 window.onload = function() {
     peticion_todos.open("GET", "http://localhost:5000/api/v1.0/all", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
     peticion_todos.onload = peticion_todos_handler
@@ -211,7 +222,8 @@ window.onload = function() {
         ev.preventDefault()
         document.querySelector("#movement_detail").classList.add("inactive")
     }
-
+    
+    document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton
     document.querySelector("#btn_actualizar_cartera").onclick = peticion_invest_state_handler
     document.querySelector("#btn_intercambiar").onclick = altaMovimiento
 }
