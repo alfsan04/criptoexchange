@@ -128,6 +128,10 @@ function peticion_alta_handler() {
     }
 }
 
+function calcular_movimiento(){
+    document.querySelector("#btn_intercambiar").classList.remove("inactive")
+}
+
 function altaMovimiento(ev) {
     ev.preventDefault()
     const moneda_from = document.querySelector("#moneda_from").value
@@ -167,6 +171,7 @@ function altaMovimiento(ev) {
     
     const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: 0})
     peticion_alta.send(data_json)
+    document.querySelector("#btn_intercambiar").classList.add("inactive")
 }
 
 //función para hacer la petición al servidor y recibir todos los valores
@@ -196,7 +201,6 @@ function invest_state(){
             document.querySelector("#cantidad_recuperada").innerHTML = estado_inversion["recuperado"] + " €"
             document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"] + " €"
             document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"] + " €"
-            
 } 
 
 function estado_boton() {
@@ -207,7 +211,14 @@ function estado_boton() {
     } else {
         btn_nuevo_movimiento.innerHTML = "+"
         document.querySelector("#movement_detail").classList.add("inactive")
+        document.querySelector("#btn_intercambiar").classList.add("inactive")
     }
+}
+
+function cancelar_intercambio(){
+    document.querySelector("#btn_nuevo_movimiento").innerHTML = "+"
+    document.querySelector("#btn_intercambiar").classList.add("inactive")
+    document.querySelector("#movement_detail").classList.add("inactive")
 }
 
 window.onload = function() {
@@ -218,11 +229,8 @@ window.onload = function() {
 
     peticion_invest_state_handler()
 
-    document.querySelector("#btn_cerrar").onclick = function(ev) {
-        ev.preventDefault()
-        document.querySelector("#movement_detail").classList.add("inactive")
-    }
-    
+    document.querySelector("#btn_calculate").onclick = calcular_movimiento
+    document.querySelector("#btn_cerrar").onclick = cancelar_intercambio
     document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton
     document.querySelector("#btn_actualizar_cartera").onclick = peticion_invest_state_handler
     document.querySelector("#btn_intercambiar").onclick = altaMovimiento

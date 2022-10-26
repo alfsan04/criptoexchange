@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="/static/css/pico.css">
         <link rel="stylesheet" href="/static/css/styles.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
         <script src="/static/js/spa.js"></script>
         <title>Criptoexchange</title>
     </head>
@@ -14,6 +15,7 @@
                 Cripto Exchange
             </div>
         </header>
+        <!--Poner sección con visible e invisible un estilo que aparezca en el centro de la pantalla, buscar position, como superponer sobre la pantalla-->
         <section class="container">
             <h1>
                 Invierte en cripto y cambia tus criptos
@@ -100,16 +102,30 @@
                         <tr>
                             <td>
                                 <input type="number" name="cantidad_from" id="cantidad_from" step="0.01" placeholder="Cuánto quieres cambiar" required>
-                            </td>
+                                
                             <td>
                                 <p>Q:</p>
                                 <p>P.U.:</p>
                             </td>
                         </tr>
+                        <tr>
+                            
+                        </tr>
                     </table>
+                    <div class="grid" id="boton_izquierda">
+                        <button id="btn_calculate">
+                            <span class="material-symbols-outlined">
+                                calculate
+                            </span>
+                        </button>
+                    </td>
+                    <td>
+                        Calcular
+                    </td>
+                    </div>
                     <div class="grid">
                         <button id="btn_cerrar">Cerrar</button>
-                        <button id="btn_intercambiar">Intercambiar</button>
+                        <button id="btn_intercambiar" class="inactive">Intercambiar</button>
                     </div>
                 </form>
             </article>
