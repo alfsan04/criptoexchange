@@ -3,7 +3,7 @@ from flask import render_template, jsonify, request
 import sqlite3
 from http import HTTPStatus
 
-from exchange_ig.models import my_investment_portfolio, select_all, insert
+from exchange_ig.models import get_movement, my_investment_portfolio, obtain_change, select_all, insert
 
 @app.route("/")
 def index():
@@ -35,6 +35,26 @@ def new():
         insert([0, 0, registro["moneda_from"], registro["cantidad_from"], registro["moneda_to"], registro["cantidad_to"]])
         return jsonify(
             {
+                "status": "success"
+            }
+        ), 201
+    except sqlite3.Error as e:
+        return jsonify(
+            {
+                "status": "Error",
+                "data": str(e)
+            }
+        ), HTTPStatus.BAD_REQUEST
+
+@app.route("/api/v1.0/calculate", methods=["POST"])
+def calculate():
+    registro = request.json
+    try:
+        operacion = get_movement([0, 0, registro["moneda_from"], registro["cantidad_from"], registro["moneda_to"], registro["cantidad_to"]])
+        
+        return jsonify(
+            {
+                "data": operacion,
                 "status": "success"
             }
         ), 201

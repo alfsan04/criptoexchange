@@ -1,6 +1,7 @@
 peticion_todos = new XMLHttpRequest()
 peticion_alta = new XMLHttpRequest()
 peticion_valor_actual = new XMLHttpRequest()
+peticion_movimiento = new XMLHttpRequest()
 
 cantidades = {}
 let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
@@ -128,10 +129,6 @@ function peticion_alta_handler() {
     }
 }
 
-function calcular_movimiento(){
-    document.querySelector("#btn_intercambiar").classList.remove("inactive")
-}
-
 function altaMovimiento(ev) {
     ev.preventDefault()
     const moneda_from = document.querySelector("#moneda_from").value
@@ -171,16 +168,16 @@ function altaMovimiento(ev) {
     
     const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: 0})
     peticion_alta.send(data_json)
-    document.querySelector("#btn_intercambiar").classList.add("inactive")
+    //document.querySelector("#btn_intercambiar").classList.add("inactive")
 }
 
 //función para hacer la petición al servidor y recibir todos los valores
 function peticion_invest_state_handler() {
     
-            peticion_valor_actual.open("GET", "http://localhost:5000/api/v1.0/balance", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
-            peticion_valor_actual.onload = invest_state
-            peticion_valor_actual.onerror = function() { alert("No se ha podido completar la petición de movimientos") }
-            peticion_valor_actual.send()
+    peticion_valor_actual.open("GET", "http://localhost:5000/api/v1.0/balance", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
+    peticion_valor_actual.onload = invest_state
+    peticion_valor_actual.onerror = function() { alert("No se ha podido completar la petición de movimientos") }
+    peticion_valor_actual.send()
         
 }
 
@@ -221,6 +218,62 @@ function cancelar_intercambio(){
     document.querySelector("#movement_detail").classList.add("inactive")
 }
 
+function calcular_movimiento_handler(ev){
+    ev.preventDefault()
+
+    const moneda_from = document.querySelector("#moneda_from").value
+    const cantidad_from = document.querySelector("#cantidad_from").value
+    const moneda_to = document.querySelector("#moneda_to").value
+    
+    //validamos las respuestas del formulario
+    if (moneda_from != "EUR" && Number(cantidad_from) > cantidades[moneda_from]) {
+        alert("No tienes suficientes fondos en " + moneda_from + " para realizar la operación")
+        return
+    }
+
+    if (moneda_from === moneda_to){
+        alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino")
+        return
+    }
+    
+    if (moneda_from === "") {
+        alert("Debes elegir una moneda")
+        return
+    }
+
+    if (cantidad_from == 0 || cantidad_from === "") {
+        alert("Debes informar una cantidad distinta de cero")
+        return
+    }
+
+    if (moneda_to === "") {
+        alert("Debes elegir una moneda")
+        return
+    }
+    peticion_movimiento.open("POST", "http://localhost:5000/api/v1.0/calculate", true)
+    peticion_movimiento.onload = calcular_movimiento
+    peticion_movimiento.onerror = function() { alert("No se ha podido completar la carga de movimientos") }
+    peticion_movimiento.setRequestHeader("Content-Type", "application/json") //siempre hay que ponerlo para que la petición se interprete como un json
+    
+    const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: 0})
+    peticion_movimiento.send(data_json)
+}
+
+function calcular_movimiento(){
+    //document.querySelector("#btn_intercambiar").classList.remove("inactive")
+
+    const los_datos = JSON.parse(this.responseText)
+    const calculo_movimiento = los_datos.data
+
+    alert(calculo_movimiento)
+
+    document.querySelector("#quantity").innerHTML = "Q: "+calculo_movimiento[5].toFixed(8)
+
+}
+
+
+
+
 window.onload = function() {
     peticion_todos.open("GET", "http://localhost:5000/api/v1.0/all", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
     peticion_todos.onload = peticion_todos_handler
@@ -229,9 +282,9 @@ window.onload = function() {
 
     peticion_invest_state_handler()
 
-    document.querySelector("#btn_calculate").onclick = calcular_movimiento
-    document.querySelector("#btn_cerrar").onclick = cancelar_intercambio
-    document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton
+    document.querySelector("#btn_calculate").onclick = calcular_movimiento_handler
+    //document.querySelector("#btn_cerrar").onclick = cancelar_intercambio
+    //document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton
     document.querySelector("#btn_actualizar_cartera").onclick = peticion_invest_state_handler
     document.querySelector("#btn_intercambiar").onclick = altaMovimiento
 }

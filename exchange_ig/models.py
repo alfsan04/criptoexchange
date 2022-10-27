@@ -17,15 +17,30 @@ def select_all():
     conn = sqlite3.connect(ORIGIN_DATA)
     cur = conn.cursor()
     cur.execute("SELECT id, date, time, moneda_from, cantidad_from, moneda_to, cantidad_to from movements order by date;")
-
     resultado = filas_to_diccionario(cur.fetchall(), cur.description)
-
     conn.close()
-
     for elemento in resultado:
         elemento["cantidad_to"] = round(elemento["cantidad_to"],8)
-
     return resultado
+
+def select_all_by_coin():
+    cartera = select_all()
+    cantidades_cripto = {}
+    cantidad_recuperada = 0
+    cantidad_invertida = 0
+    for elemento in cartera:
+        if elemento["moneda_to"] == "EUR":
+            cantidad_recuperada += elemento["cantidad_to"]
+        elif elemento["moneda_to"] not in cantidades_cripto:
+            cantidades_cripto[elemento["moneda_to"]] = elemento["cantidad_to"]
+        else:
+            cantidades_cripto[elemento["moneda_to"]] += elemento["cantidad_to"]
+        if elemento["moneda_from"] == "EUR":
+            cantidad_invertida += elemento["cantidad_from"]
+        else:
+            cantidades_cripto[elemento["moneda_from"]] -= elemento["cantidad_from"]
+    return [cantidades_cripto, cantidad_invertida, cantidad_recuperada]
+
 
 def obtain_change(cripto1,cripto2):
     r = requests.get("https://rest.coinapi.io/v1/exchangerate/{}/{}?apikey={}".format(cripto1, cripto2, api_key))
@@ -44,44 +59,26 @@ def get_all_changes():
 
 #función para trabajar la lista de movimientos y almacenar cantidades de cada cripto en cartera además de su cambio oficial
 def my_investment_portfolio():
+    portfolio = select_all_by_coin()
+    criptos = portfolio[0]
+    criptos_con_cambio = {}
+    for clave, valor in criptos.items():
+        #lista para almacenar cantidad, cambio unitario en euros y cantidad total
+        criptos_con_cambio[clave] = [valor, 0, 0]
+    euros_invertidos = portfolio[1]
+    euros_recuperados = portfolio[2]
+    todas_las_criptos = get_all_changes()
     total_balance = 0
-    portfolio = []
-    cartera = select_all()
-    euros_invertidos = 0
-    euros_recuperados = 0
-    for elemento in cartera:
-        contenida = False
-        if elemento["moneda_from"] == "EUR":
-            euros_invertidos += elemento["cantidad_from"]
-        if elemento["moneda_to"] == "EUR":
-            euros_recuperados += elemento["cantidad_to"]
-        for posicion in portfolio:
-            if posicion[0] == elemento["moneda_from"]:
-                posicion[1] -= elemento["cantidad_from"]
-            if posicion[0] == elemento["moneda_to"]:
-                posicion[1] += elemento["cantidad_to"]
-                contenida = True
-        if contenida == False:
-            #creo una lista con 4 posiciones para guardar el elemento, la cantidad que tengo y más adelante el cambio unitario y la cantidad total en EUR
-            portfolio.append([elemento["moneda_to"], elemento["cantidad_to"], 0, 0])
-    #introducimos el cambio en el momento de la petición
-    criptos = get_all_changes()
-    for elemento in criptos:
+    for elemento in todas_las_criptos:
         if elemento["asset_id"] == "EUR":
             change_eur_usd = elemento["price_usd"]
-        if elemento["type_is_crypto"] == 1:
-            for posicion in portfolio:
-                if posicion[0] == elemento["asset_id"]:
-                    posicion[2] = elemento["price_usd"]
-    #introduzco la cantidad de la posición en euros en la posición 3 de la lista
-    for posicion in portfolio:
-        posicion[3] = posicion[1]*((1/change_eur_usd)*posicion[2])
-        total_balance += posicion[3]
-
+        if elemento["asset_id"] in criptos_con_cambio:
+            criptos_con_cambio[elemento["asset_id"]][1] = float(elemento["price_usd"])
+    for elemento in criptos_con_cambio:
+        criptos_con_cambio[elemento][1] = criptos_con_cambio[elemento][1] * (1/change_eur_usd)
+        criptos_con_cambio[elemento][2] = criptos_con_cambio[elemento][0] * criptos_con_cambio[elemento][1]
+        total_balance += criptos_con_cambio[elemento][2]
     return {"invertido": round(euros_invertidos,2), "recuperado": round(euros_recuperados,2), "valor_compra": round(euros_invertidos-euros_recuperados,2), "valor_actual": round(total_balance,2)}
-            
-
-
 
 def insert(registro):
     conn = sqlite3.connect(ORIGIN_DATA)
@@ -96,6 +93,13 @@ def insert(registro):
     conn.commit()
 
     conn.close()
+
+def get_movement(registro):
+    date = datetime.now()
+    registro[0] = "{:04d}-{:02d}-{:02d}".format(date.year, date.month, date.day)
+    registro[1] = "{:02d}:{:02d}:{:02d}".format(date.hour, date.minute, date.second)
+    registro[5] = float(registro[3])*obtain_change(registro[2], registro[4])
+    return registro
 
 
     
