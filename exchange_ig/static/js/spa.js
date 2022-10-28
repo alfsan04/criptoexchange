@@ -3,8 +3,11 @@ peticion_alta = new XMLHttpRequest()
 peticion_valor_actual = new XMLHttpRequest()
 peticion_movimiento = new XMLHttpRequest()
 
-cantidades = {}
+cantidades = {};
 let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
+var moneda_from = ""
+var cantidad_from = ""
+var moneda_to =""
 
 function peticion_todos_handler(){ //handler se traduce como manejador
     if (this.readyState === 4) {
@@ -14,6 +17,8 @@ function peticion_todos_handler(){ //handler se traduce como manejador
             const la_tabla = document.querySelector("#movements_table")
             const cantidad_disponible = document.querySelector("#cantidades_disponibles")
             const movimientos = los_datos.data
+
+            formulario_cerrado()
 
             cantidades = {};
             for (let i=0; i<monedas.length; i++) {
@@ -131,44 +136,60 @@ function peticion_alta_handler() {
 
 function altaMovimiento(ev) {
     ev.preventDefault()
-    const moneda_from = document.querySelector("#moneda_from").value
-    const cantidad_from = document.querySelector("#cantidad_from").value
-    const moneda_to = document.querySelector("#moneda_to").value
+    const moneda_from_alta = document.querySelector("#moneda_from").value
+    const cantidad_from_alta = document.querySelector("#cantidad_from").value
+    const moneda_to_alta = document.querySelector("#moneda_to").value
+
+    if (moneda_to_alta != moneda_to) {
+        alert("Has modificado la moneda de destino, debes volver a calcular")
+        document.querySelector("#btn_intercambiar").classList.add("inactive")
+        borrar_formulario();
+        return
+    }
+
+    if (moneda_from_alta != moneda_from) {
+        alert("Has modificado la moneda de origen, debes volver a calcular")
+        document.querySelector("#btn_intercambiar").classList.add("inactive")
+        borrar_formulario();
+        return
+    }
+
+    if (cantidad_from_alta != cantidad_from) {
+        alert("Has modificado la cantidad de origen, debes volver a calcular")
+        document.querySelector("#btn_intercambiar").classList.add("inactive")
+        borrar_formulario();
+        return
+    }
+
+    peticion_alta.open("POST", "http://localhost:5000/api/v1.0/new", true);
+    peticion_alta.onload = peticion_alta_handler;
+    peticion_alta.onerror = function() { alert("No se ha podido completar la carga de movimientos") };
+    peticion_alta.setRequestHeader("Content-Type", "application/json"); //siempre hay que ponerlo para que la petición se interprete como un json
     
-    //validamos las respuestas del formulario
-    if (moneda_from != "EUR" && Number(cantidad_from) > cantidades[moneda_from]) {
-        alert("No tienes suficientes fondos en " + moneda_from + " para realizar la operación")
-        return
-    }
-
-    if (moneda_from === moneda_to){
-        alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino")
-        return
-    }
+    const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: 0});
+    peticion_alta.send(data_json);
     
-    if (moneda_from === "") {
-        alert("Debes elegir una moneda")
-        return
-    }
+}
 
-    if (cantidad_from == 0 || cantidad_from === "") {
-        alert("Debes informar una cantidad distinta de cero")
-        return
-    }
+function borrar_formulario(){
+    document.getElementById("moneda_from").options.item(0).selected = "selected";
+    document.getElementById("moneda_to").options.item(0).selected = "selected";
+    document.getElementById("cantidad_from").value = "";
+    document.getElementById("cantidad_from").placeholder = "Cuánto quieres cambiar";
+    document.querySelector("#quantity").innerHTML = "";
+    document.querySelector("#precio_unitario").innerHTML = "";
+}
 
-    if (moneda_to === "") {
-        alert("Debes elegir una moneda")
-        return
-    }
+function formulario_cerrado(){
+    document.querySelector("#btn_intercambiar").classList.add("inactive");
+    document.querySelector("#movement_detail").classList.add("inactive");
+    document.querySelector("#btn_nuevo_movimiento").innerHTML = "+";
+    borrar_formulario();
+}
 
-    peticion_alta.open("POST", "http://localhost:5000/api/v1.0/new", true)
-    peticion_alta.onload = peticion_alta_handler
-    peticion_alta.onerror = function() { alert("No se ha podido completar la carga de movimientos") }
-    peticion_alta.setRequestHeader("Content-Type", "application/json") //siempre hay que ponerlo para que la petición se interprete como un json
-    
-    const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: 0})
-    peticion_alta.send(data_json)
-    //document.querySelector("#btn_intercambiar").classList.add("inactive")
+function formulario_abierto(){
+    document.querySelector("#movement_detail").classList.remove("inactive");
+    document.querySelector("#btn_nuevo_movimiento").innerHTML = "-";
 }
 
 //función para hacer la petición al servidor y recibir todos los valores
@@ -201,42 +222,29 @@ function invest_state(){
 } 
 
 function estado_boton() {
-    const btn_nuevo_movimiento = document.querySelector("#btn_nuevo_movimiento")
+    const btn_nuevo_movimiento = document.querySelector("#btn_nuevo_movimiento");
     if (btn_nuevo_movimiento.innerHTML == "+") {
-        btn_nuevo_movimiento.innerHTML = "-"
-        document.querySelector("#movement_detail").classList.remove("inactive")
+        formulario_abierto();
     } else {
-        btn_nuevo_movimiento.innerHTML = "+"
-        document.querySelector("#movement_detail").classList.add("inactive")
-        document.querySelector("#btn_intercambiar").classList.add("inactive")
+        formulario_cerrado();
     }
-}
-
-function cancelar_intercambio(){
-    document.querySelector("#btn_nuevo_movimiento").innerHTML = "+"
-    document.querySelector("#btn_intercambiar").classList.add("inactive")
-    document.querySelector("#movement_detail").classList.add("inactive")
 }
 
 function calcular_movimiento_handler(ev){
     ev.preventDefault()
 
-    const moneda_from = document.querySelector("#moneda_from").value
-    const cantidad_from = document.querySelector("#cantidad_from").value
-    const moneda_to = document.querySelector("#moneda_to").value
+    moneda_from = document.querySelector("#moneda_from").value
+    cantidad_from = document.querySelector("#cantidad_from").value
+    moneda_to = document.querySelector("#moneda_to").value
     
     //validamos las respuestas del formulario
-    if (moneda_from != "EUR" && Number(cantidad_from) > cantidades[moneda_from]) {
-        alert("No tienes suficientes fondos en " + moneda_from + " para realizar la operación")
+
+    if (moneda_from === "") {
+        alert("Debes elegir una moneda")
         return
     }
 
-    if (moneda_from === moneda_to){
-        alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino")
-        return
-    }
-    
-    if (moneda_from === "") {
+    if (moneda_to === "") {
         alert("Debes elegir una moneda")
         return
     }
@@ -246,10 +254,16 @@ function calcular_movimiento_handler(ev){
         return
     }
 
-    if (moneda_to === "") {
-        alert("Debes elegir una moneda")
+    if (moneda_from != "EUR" && Number(cantidad_from) > cantidades[moneda_from]) {
+        alert("No tienes suficientes fondos en " + moneda_from + " para realizar la operación")
         return
     }
+
+    if (moneda_from === moneda_to){
+        alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino")
+        return
+    }
+
     peticion_movimiento.open("POST", "http://localhost:5000/api/v1.0/calculate", true)
     peticion_movimiento.onload = calcular_movimiento
     peticion_movimiento.onerror = function() { alert("No se ha podido completar la carga de movimientos") }
@@ -260,19 +274,15 @@ function calcular_movimiento_handler(ev){
 }
 
 function calcular_movimiento(){
-    //document.querySelector("#btn_intercambiar").classList.remove("inactive")
+    document.querySelector("#btn_intercambiar").classList.remove("inactive")
 
     const los_datos = JSON.parse(this.responseText)
     const calculo_movimiento = los_datos.data
 
-    alert(calculo_movimiento)
-
     document.querySelector("#quantity").innerHTML = "Q: "+calculo_movimiento[5].toFixed(8)
+    document.querySelector("#precio_unitario").innerHTML = "P.U: "+calculo_movimiento[6].toFixed(8)
 
 }
-
-
-
 
 window.onload = function() {
     peticion_todos.open("GET", "http://localhost:5000/api/v1.0/all", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
@@ -283,8 +293,8 @@ window.onload = function() {
     peticion_invest_state_handler()
 
     document.querySelector("#btn_calculate").onclick = calcular_movimiento_handler
-    //document.querySelector("#btn_cerrar").onclick = cancelar_intercambio
-    //document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton
+    document.querySelector("#btn_cerrar").onclick = formulario_cerrado
+    document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton
     document.querySelector("#btn_actualizar_cartera").onclick = peticion_invest_state_handler
     document.querySelector("#btn_intercambiar").onclick = altaMovimiento
 }

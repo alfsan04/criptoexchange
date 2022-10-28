@@ -98,7 +98,9 @@ def get_movement(registro):
     date = datetime.now()
     registro[0] = "{:04d}-{:02d}-{:02d}".format(date.year, date.month, date.day)
     registro[1] = "{:02d}:{:02d}:{:02d}".format(date.hour, date.minute, date.second)
-    registro[5] = float(registro[3])*obtain_change(registro[2], registro[4])
+    tasa = obtain_change(registro[2], registro[4])
+    registro[5] = float(registro[3]) * tasa
+    registro.append(tasa)
     return registro
 
 
