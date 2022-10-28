@@ -117,9 +117,7 @@ function clear_tab(){
     cantidad_disponible.innerHTML = ""
     const trow2 = document.createElement("tr")
     cantidad_disponible.appendChild(trow2)
-
 }
-
 
 function peticion_alta_handler() {
     if (this.readyState === 4) {
@@ -168,7 +166,6 @@ function altaMovimiento(ev) {
     
     const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: 0});
     peticion_alta.send(data_json);
-    
 }
 
 function borrar_formulario(){
@@ -194,31 +191,27 @@ function formulario_abierto(){
 
 //función para hacer la petición al servidor y recibir todos los valores
 function peticion_invest_state_handler() {
-    
     peticion_valor_actual.open("GET", "http://localhost:5000/api/v1.0/balance", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
     peticion_valor_actual.onload = invest_state
     peticion_valor_actual.onerror = function() { alert("No se ha podido completar la petición de movimientos") }
     peticion_valor_actual.send()
-        
 }
 
-//revisar la función, no funciona
 function invest_state(){
-
-    /*if (this.readyState === 4) {
-        if (this.status === 201) {*/
-            document.querySelector("#cantidad_invertida").innerHTML = ""
-            document.querySelector("#cantidad_recuperada").innerHTML = ""
-            document.querySelector("#valor_compra").innerHTML = ""
-            document.querySelector("#valor_actual").innerHTML = ""            
+    if (this.readyState === 4 && this.status === 201) {
+        document.querySelector("#cantidad_invertida").innerHTML = ""
+        document.querySelector("#cantidad_recuperada").innerHTML = ""
+        document.querySelector("#valor_compra").innerHTML = ""
+        document.querySelector("#valor_actual").innerHTML = ""            
+        
+        const los_datos = JSON.parse(this.responseText)
+        const estado_inversion = los_datos.data
             
-            const los_datos = JSON.parse(this.responseText)
-            const estado_inversion = los_datos.data
-                
-            document.querySelector("#cantidad_invertida").innerHTML = estado_inversion["invertido"] + " €"
-            document.querySelector("#cantidad_recuperada").innerHTML = estado_inversion["recuperado"] + " €"
-            document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"] + " €"
-            document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"] + " €"
+        document.querySelector("#cantidad_invertida").innerHTML = estado_inversion["invertido"] + " €"
+        document.querySelector("#cantidad_recuperada").innerHTML = estado_inversion["recuperado"] + " €"
+        document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"] + " €"
+        document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"] + " €"
+    }
 } 
 
 function estado_boton() {
@@ -281,7 +274,6 @@ function calcular_movimiento(){
 
     document.querySelector("#quantity").innerHTML = "Q: "+calculo_movimiento[5].toFixed(8)
     document.querySelector("#precio_unitario").innerHTML = "P.U: "+calculo_movimiento[6].toFixed(8)
-
 }
 
 window.onload = function() {
