@@ -9,26 +9,26 @@ from exchange_ig.models import get_movement, my_investment_portfolio, obtain_cha
 def index():
     return render_template("index.html")
 
-@app.route("/api/v1.0/all", methods=["GET"])
+@app.route("/api/v1.0/movimientos", methods=["GET"])
 def all_movements():
     try:
         registros = select_all()
 
         return jsonify(
             {
-                "data": registros,
-                "status": "OK"
+                "status": "success",
+                "data": registros
             }
         )
     except sqlite3.Error as e:
         return jsonify(
             {
-                "status": "Error",
-                "data": str(e)
+                "status": "fail",
+                "mensaje": str(e)
             }
         ), 400 #añadimos el tipo de error que queremos
 
-@app.route("/api/v1.0/new", methods=["POST"])
+@app.route("/api/v1.0/movimiento", methods=["POST"])
 def new():
     registro = request.json
     try:
@@ -41,46 +41,45 @@ def new():
     except sqlite3.Error as e:
         return jsonify(
             {
-                "status": "Error",
-                "data": str(e)
+                "status": "fail",
+                "mensaje": str(e)
             }
-        ), HTTPStatus.BAD_REQUEST
+        ), 400
 
-@app.route("/api/v1.0/calculate", methods=["POST"])
+@app.route("/api/v1.0/tasa/<moneda_from>/<moneda_to>", methods=["GET"])
 def calculate():
     registro = request.json
     try:
         operacion = get_movement([0, 0, registro["moneda_from"], registro["cantidad_from"], registro["moneda_to"], registro["cantidad_to"]])
-        
         return jsonify(
             {
-                "data": operacion,
-                "status": "success"
+                "status": "success",
+                "data": operacion
             }
         ), 201
     except sqlite3.Error as e:
         return jsonify(
             {
-                "status": "Error",
-                "data": str(e)
+                "status": "fail",
+                "mensaje": str(e)
             }
-        ), HTTPStatus.BAD_REQUEST
+        ), 400
 
-@app.route("/api/v1.0/balance", methods=["GET"])
+@app.route("/api/v1.0/estado_inversion", methods=["GET"])
 def balance():
     try:
         valor_compra = my_investment_portfolio()
 
         return jsonify(
             {
-                "data": valor_compra,
-                "status": "OK"
+                "status": "success",
+                "data": valor_compra
             }
         )
     except sqlite3.Error as e:
         return jsonify(
             {
                 "status": "Error",
-                "data": str(e)
+                "mensaje": str(e)
             }
         ), 400
