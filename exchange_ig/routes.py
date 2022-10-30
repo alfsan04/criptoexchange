@@ -1,7 +1,6 @@
 from exchange_ig import app
 from flask import render_template, jsonify, request
 import sqlite3
-from http import HTTPStatus
 
 from exchange_ig.models import get_movement, my_investment_portfolio, obtain_change, select_all, insert
 
@@ -46,11 +45,11 @@ def new():
             }
         ), 400
 
-@app.route("/api/v1.0/tasa/<moneda_from>/<moneda_to>", methods=["GET"])
+@app.route("/api/v1.0/tasa", methods=["POST"]) 
 def calculate():
-    registro = request.json
+    registros = request.json
     try:
-        operacion = get_movement([0, 0, registro["moneda_from"], registro["cantidad_from"], registro["moneda_to"], registro["cantidad_to"]])
+        operacion = get_movement([0, 0, registros["moneda_from"], registros["cantidad_from"], registros["moneda_to"], registros["cantidad_to"]])
         return jsonify(
             {
                 "status": "success",
@@ -75,7 +74,7 @@ def balance():
                 "status": "success",
                 "data": valor_compra
             }
-        )
+        ), 200
     except sqlite3.Error as e:
         return jsonify(
             {

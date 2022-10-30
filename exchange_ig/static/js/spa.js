@@ -5,9 +5,9 @@ peticion_movimiento = new XMLHttpRequest()
 
 cantidades = {};
 let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
-var moneda_from = ""
-var cantidad_from = ""
-var moneda_to =""
+var moneda_from_glob = ""
+var cantidad_from_glob = ""
+var moneda_to_glob =""
 
 function peticion_todos_handler(){ //handler se traduce como manejador
     if (this.readyState === 4) {
@@ -18,14 +18,15 @@ function peticion_todos_handler(){ //handler se traduce como manejador
             const cantidad_disponible = document.querySelector("#cantidades_disponibles")
             const movimientos = los_datos.data
 
-            formulario_cerrado()
+            formulario_cerrado();
+            peticion_estado_inversion_handler();
 
             cantidades = {};
             for (let i=0; i<monedas.length; i++) {
                 cantidades[monedas[i]] = 0;
             }
             
-            clear_tab()
+            clear_tab();
 
             for (let i=0; i<movimientos.length; i++) {
                 item = movimientos[i]
@@ -63,18 +64,18 @@ function peticion_todos_handler(){ //handler se traduce como manejador
             }
 
             for (let i= 0; i<monedas.length; i++) {
-                const trow = document.createElement("tr")
-                const tdmoneda = document.createElement("td")
-                const tdcantidad = document.createElement("td")
+                const trow = document.createElement("tr");
+                const tdmoneda = document.createElement("td");
+                const tdcantidad = document.createElement("td");
                 if (cantidades[monedas[i]] && cantidades[monedas[i]] != 0) {
-                    tdmoneda.innerHTML = monedas[i]
-                    tdcantidad.innerHTML = cantidades[monedas[i]].toFixed(8)
+                    tdmoneda.innerHTML = monedas[i];
+                    tdcantidad.innerHTML = cantidades[monedas[i]].toFixed(8);
 
-                    trow.appendChild(tdmoneda)
-                    trow.appendChild(tdcantidad)
+                    trow.appendChild(tdmoneda);
+                    trow.appendChild(tdcantidad);
                 }
                 
-                cantidad_disponible.appendChild(trow)
+                cantidad_disponible.appendChild(trow);
             }
 
         } else {
@@ -132,29 +133,29 @@ function peticion_alta_handler() {
 
 function altaMovimiento(ev) {
     ev.preventDefault()
-    const moneda_from_alta = document.querySelector("#moneda_from").value
-    const cantidad_from_alta = document.querySelector("#cantidad_from").value
-    const moneda_to_alta = document.querySelector("#moneda_to").value
+    const moneda_from_alta = document.querySelector("#moneda_from").value;
+    const cantidad_from_alta = document.querySelector("#cantidad_from").value;
+    const moneda_to_alta = document.querySelector("#moneda_to").value;
 
-    if (moneda_to_alta != moneda_to) {
-        alert("Has modificado la moneda de destino, debes volver a calcular")
-        document.querySelector("#btn_intercambiar").classList.add("inactive")
+    if (moneda_to_alta != moneda_to_glob) {
+        alert("Has modificado la moneda de destino, debes volver a calcular");
+        document.querySelector("#btn_intercambiar").classList.add("inactive");
         borrar_formulario();
-        return
+        return;
     }
 
-    if (moneda_from_alta != moneda_from) {
-        alert("Has modificado la moneda de origen, debes volver a calcular")
-        document.querySelector("#btn_intercambiar").classList.add("inactive")
+    if (moneda_from_alta != moneda_from_glob) {
+        alert("Has modificado la moneda de origen, debes volver a calcular");
+        document.querySelector("#btn_intercambiar").classList.add("inactive");
         borrar_formulario();
-        return
+        return;
     }
 
-    if (cantidad_from_alta != cantidad_from) {
-        alert("Has modificado la cantidad de origen, debes volver a calcular")
-        document.querySelector("#btn_intercambiar").classList.add("inactive")
+    if (cantidad_from_alta != cantidad_from_glob) {
+        alert("Has modificado la cantidad de origen, debes volver a calcular");
+        document.querySelector("#btn_intercambiar").classList.add("inactive");
         borrar_formulario();
-        return
+        return;
     }
 
     peticion_alta.open("POST", "http://localhost:5000/api/v1.0/movimiento", true);
@@ -162,7 +163,7 @@ function altaMovimiento(ev) {
     peticion_alta.onerror = function() { alert("No se ha podido completar la carga de movimientos") };
     peticion_alta.setRequestHeader("Content-Type", "application/json"); //siempre hay que ponerlo para que la petición se interprete como un json
     
-    const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: 0});
+    const data_json = JSON.stringify({moneda_from: moneda_from_glob, cantidad_from: cantidad_from_glob, moneda_to: moneda_to_glob, cantidad_to: 0});
     peticion_alta.send(data_json);
 }
 
@@ -195,8 +196,8 @@ function peticion_estado_inversion_handler() {
     peticion_valor_actual.send()
 }
 
-function iestado_inversion(){
-    if (this.readyState === 4 && this.status === 201) {
+function estado_inversion(){
+    if (this.readyState === 4 && this.status === 200) {
         document.querySelector("#cantidad_invertida").innerHTML = ""
         document.querySelector("#cantidad_recuperada").innerHTML = ""
         document.querySelector("#valor_compra").innerHTML = ""
@@ -209,6 +210,8 @@ function iestado_inversion(){
         document.querySelector("#cantidad_recuperada").innerHTML = estado_inversion["recuperado"] + " €"
         document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"] + " €"
         document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"] + " €"
+    } else {
+        alert("Se ha producido un error en el alta de movimientos")
     }
 } 
 
@@ -222,69 +225,80 @@ function estado_boton() {
 }
 
 function calcular_movimiento_handler(ev){
-    ev.preventDefault()
+    ev.preventDefault();
 
-    moneda_from = document.querySelector("#moneda_from").value
-    cantidad_from = document.querySelector("#cantidad_from").value
-    moneda_to = document.querySelector("#moneda_to").value
+    const moneda_from_loc = document.querySelector("#moneda_from").value;
+    moneda_from_glob = moneda_from_loc;
+    const cantidad_from_loc = document.querySelector("#cantidad_from").value;
+    cantidad_from_glob = cantidad_from_loc;
+    const moneda_to_loc = document.querySelector("#moneda_to").value;
+    moneda_to_glob = moneda_to_loc;
     
     //validamos las respuestas del formulario
 
-    if (moneda_from === "") {
-        alert("Debes elegir una moneda")
-        return
+    if (moneda_from_loc === "") {
+        alert("Debes elegir una moneda");
+        return;
     }
 
-    if (moneda_to === "") {
-        alert("Debes elegir una moneda")
-        return
+    if (moneda_to_loc === "") {
+        alert("Debes elegir una moneda");
+        return;
     }
 
-    if (cantidad_from == 0 || cantidad_from === "") {
-        alert("Debes informar una cantidad distinta de cero")
-        return
+    if (cantidad_from_loc == 0 || cantidad_from_loc === "") {
+        alert("Debes informar una cantidad distinta de cero");
+        return;
     }
 
-    if (moneda_from != "EUR" && Number(cantidad_from) > cantidades[moneda_from]) {
-        alert("No tienes suficientes fondos en " + moneda_from + " para realizar la operación")
-        return
+    if (moneda_from_loc != "EUR" && Number(cantidad_from_loc) > cantidades[moneda_from_loc]) {
+        alert("No tienes suficientes fondos en " + moneda_from_loc + " para realizar la operación");
+        return;
     }
 
-    if (moneda_from === moneda_to){
-        alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino")
-        return
+    if (moneda_from_loc === moneda_to_loc){
+        alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino");
+        return;
     }
-    const url = "http://localhost:5000/api/v1.0/tasa/" + moneda_from + "/" + moneda_to
-    peticion_movimiento.open("GET", url, true)
-    peticion_movimiento.onload = calcular_movimiento
+    const url = "http://localhost:5000/api/v1.0/tasa"
+    peticion_movimiento.open("POST", url, true);
+    peticion_movimiento.onload = calcular_movimiento;
     peticion_movimiento.onerror = function() { alert("No se ha podido completar la carga de movimientos") }
-    peticion_movimiento.setRequestHeader("Content-Type", "application/json") //siempre hay que ponerlo para que la petición se interprete como un json
-    
-    const data_json = JSON.stringify({moneda_from: moneda_from, cantidad_from: cantidad_from, moneda_to: moneda_to, cantidad_to: 0})
-    peticion_movimiento.send(data_json)
+    peticion_movimiento.setRequestHeader("Content-Type", "application/json"); //siempre hay que ponerlo para que la petición se interprete como un json
+    const data_json = JSON.stringify({moneda_from: moneda_from_loc, cantidad_from: cantidad_from_loc, moneda_to: moneda_to_loc, cantidad_to: 0});
+    peticion_movimiento.send(data_json);
 }
 
 function calcular_movimiento(){
-    document.querySelector("#btn_intercambiar").classList.remove("inactive")
+    if (this.readyState === 4 && this.status === 201) {
+        document.querySelector("#btn_intercambiar").classList.remove("inactive");
 
-    const los_datos = JSON.parse(this.responseText)
-    const calculo_movimiento = los_datos.data
+        const los_datos = JSON.parse(this.responseText);
+        const calculo_movimiento = los_datos.data;
 
-    document.querySelector("#quantity").innerHTML = "Q: "+calculo_movimiento[5].toFixed(8)
-    document.querySelector("#precio_unitario").innerHTML = "P.U: "+calculo_movimiento[6].toFixed(8)
+        document.querySelector("#quantity").innerHTML = "Q: "+calculo_movimiento[5].toFixed(8);
+        document.querySelector("#precio_unitario").innerHTML = "P.U: "+calculo_movimiento[6].toFixed(8);
+
+    } else {
+        alert("Se ha producido un error en el cálculo de movimientos");
+        borrar_formulario();
+    }
 }
-
-window.onload = function() {
+function cargar_pagina(){
     peticion_todos.open("GET", "http://localhost:5000/api/v1.0/movimientos", true) //el true hace que sea asíncrona, no se queda esperando la respuesta a la petición, todo sigue funcionando
     peticion_todos.onload = peticion_todos_handler
     peticion_todos.onerror = function() { alert("No se ha podido completar la petición de movimientos") }
     peticion_todos.send()
+}
 
-    peticion_invest_state_handler()
+window.onload = function() {
+    
+    cargar_pagina();
+    peticion_estado_inversion_handler();
 
-    document.querySelector("#btn_calculate").onclick = calcular_movimiento_handler
-    document.querySelector("#btn_cerrar").onclick = formulario_cerrado
-    document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton
-    document.querySelector("#btn_actualizar_cartera").onclick = peticion_estado_inversion_handler
-    document.querySelector("#btn_intercambiar").onclick = altaMovimiento
+    document.querySelector("#btn_calculate").onclick = calcular_movimiento_handler;
+    document.querySelector("#btn_cerrar").onclick = formulario_cerrado;
+    document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton;
+    document.querySelector("#btn_actualizar_cartera").onclick = peticion_estado_inversion_handler;
+    document.querySelector("#btn_intercambiar").onclick = altaMovimiento;
 }

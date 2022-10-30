@@ -60,25 +60,28 @@ def get_all_changes():
 #función para trabajar la lista de movimientos y almacenar cantidades de cada cripto en cartera además de su cambio oficial
 def my_investment_portfolio():
     portfolio = select_all_by_coin()
-    criptos = portfolio[0]
-    criptos_con_cambio = {}
-    for clave, valor in criptos.items():
-        #lista para almacenar cantidad, cambio unitario en euros y cantidad total
-        criptos_con_cambio[clave] = [valor, 0, 0]
-    euros_invertidos = portfolio[1]
-    euros_recuperados = portfolio[2]
-    todas_las_criptos = get_all_changes()
-    total_balance = 0
-    for elemento in todas_las_criptos:
-        if elemento["asset_id"] == "EUR":
-            change_eur_usd = elemento["price_usd"]
-        if elemento["asset_id"] in criptos_con_cambio:
-            criptos_con_cambio[elemento["asset_id"]][1] = float(elemento["price_usd"])
-    for elemento in criptos_con_cambio:
-        criptos_con_cambio[elemento][1] = criptos_con_cambio[elemento][1] * (1/change_eur_usd)
-        criptos_con_cambio[elemento][2] = criptos_con_cambio[elemento][0] * criptos_con_cambio[elemento][1]
-        total_balance += criptos_con_cambio[elemento][2]
-    return {"invertido": round(euros_invertidos,2), "recuperado": round(euros_recuperados,2), "valor_compra": round(euros_invertidos-euros_recuperados,2), "valor_actual": round(total_balance,2)}
+    if portfolio[0]:
+        criptos = portfolio[0]
+        criptos_con_cambio = {}
+        for clave, valor in criptos.items():
+            #lista para almacenar cantidad, cambio unitario en euros y cantidad total
+            criptos_con_cambio[clave] = [valor, 0, 0]
+        euros_invertidos = portfolio[1]
+        euros_recuperados = portfolio[2]
+        todas_las_criptos = get_all_changes()
+        total_balance = 0
+        for elemento in todas_las_criptos:
+            if elemento["asset_id"] == "EUR":
+                change_eur_usd = elemento["price_usd"]
+            if elemento["asset_id"] in criptos_con_cambio:
+                criptos_con_cambio[elemento["asset_id"]][1] = float(elemento["price_usd"])
+        for elemento in criptos_con_cambio:
+            criptos_con_cambio[elemento][1] = criptos_con_cambio[elemento][1] * (1/change_eur_usd)
+            criptos_con_cambio[elemento][2] = criptos_con_cambio[elemento][0] * criptos_con_cambio[elemento][1]
+            total_balance += criptos_con_cambio[elemento][2]
+        return {"invertido": round(euros_invertidos,2), "recuperado": round(euros_recuperados,2), "valor_compra": round(euros_invertidos-euros_recuperados,2), "valor_actual": round(total_balance,2)}
+    else:
+        return {"invertido": 0, "recuperado": 0, "valor_compra": 0, "valor_actual": 0}
 
 def insert(registro):
     conn = sqlite3.connect(ORIGIN_DATA)
