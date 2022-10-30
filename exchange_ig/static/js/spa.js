@@ -8,6 +8,7 @@ let monedas = ["BTC","ETH","USDT","BNB","XRP","ADA","DOT","MATIC"];
 var moneda_from_glob = ""
 var cantidad_from_glob = ""
 var moneda_to_glob =""
+var hora = ""
 
 function peticion_todos_handler(){ //handler se traduce como manejador
     if (this.readyState === 4) {
@@ -260,8 +261,7 @@ function calcular_movimiento_handler(ev){
         alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino");
         return;
     }
-    const url = "http://localhost:5000/api/v1.0/tasa"
-    peticion_movimiento.open("POST", url, true);
+    peticion_movimiento.open("POST", "http://localhost:5000/api/v1.0/tasa", true);
     peticion_movimiento.onload = calcular_movimiento;
     peticion_movimiento.onerror = function() { alert("No se ha podido completar la carga de movimientos") }
     peticion_movimiento.setRequestHeader("Content-Type", "application/json"); //siempre hay que ponerlo para que la petición se interprete como un json
@@ -275,6 +275,7 @@ function calcular_movimiento(){
 
         const los_datos = JSON.parse(this.responseText);
         const calculo_movimiento = los_datos.data;
+        hora = calculo_movimiento[1]
 
         document.querySelector("#quantity").innerHTML = "Q: "+calculo_movimiento[5].toFixed(8);
         document.querySelector("#precio_unitario").innerHTML = "P.U: "+calculo_movimiento[6].toFixed(8);
@@ -290,6 +291,48 @@ function cargar_pagina(){
     peticion_todos.onerror = function() { alert("No se ha podido completar la petición de movimientos") }
     peticion_todos.send()
 }
+
+/* revisar para la cuenta atrás de 5 minutos
+function cuenta_regresiva(){
+    var interval = ""
+    var date = new Date('2020-01-01 00:03');
+    fin=false
+    document.querySelector("#btn_aceptar").disabled=false
+
+    // Función para rellenar con ceros
+    var padLeft = n => "00".substring(0, "00".length - n.length) + n;
+    
+    // Asignar el intervalo a una variable para poder eliminar el intervale cuando llegue al limite
+    var interval = setInterval(() => {
+        
+        
+      // Asignar el valor de minutos
+      var minutes = padLeft(date.getMinutes() + "");
+      // Asignqr el valor de segundos
+      var seconds = padLeft(date.getSeconds() + "");
+
+      document.querySelector("#minutes").innerHTML = "Oferta valida -   " + minutes+":"
+      document.querySelector("#seconds").innerHTML = seconds
+      
+        console.log(minutes,seconds)
+        console.log(fin)
+      
+      // Restarle a la fecha actual 1000 milisegundos
+      date = new Date(date.getTime() - 1000);
+       
+      // Si llega a 1:00, cambio color a rojo
+      document.querySelector("#time").style.color = "black";
+      if( minutes <= '01' && seconds <= '00' ) {
+        document.querySelector("#time").style.color = "red";
+        
+      }
+      if(minutes == '00' && seconds == '00'|| fin==true){
+        clearInterval(interval); 
+        desmarcar_aceptar()
+      }      
+    }, 1000);
+    
+}*/
 
 window.onload = function() {
     
