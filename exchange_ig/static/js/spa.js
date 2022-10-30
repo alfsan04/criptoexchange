@@ -80,7 +80,7 @@ function peticion_todos_handler(){ //handler se traduce como manejador
             }
 
         } else {
-            alert("Se ha producido un error en la consulta de movimientos")
+            activar_alerta("Se ha producido un error en la consulta de movimientos")
         }
     }
 }
@@ -127,7 +127,7 @@ function peticion_alta_handler() {
             peticion_todos.onerror = function() { alert("No se ha podido completar la petición de movimientos") }
             peticion_todos.send()
         } else {
-            alert("Se ha producido un error en el alta de movimientos")
+            activar_alerta("Se ha producido un error en el alta de movimientos")
         }
     }
 }
@@ -139,21 +139,21 @@ function altaMovimiento(ev) {
     const moneda_to_alta = document.querySelector("#moneda_to").value;
 
     if (moneda_to_alta != moneda_to_glob) {
-        alert("Has modificado la moneda de destino, debes volver a calcular");
+        activar_alerta("Has modificado la moneda de destino, debes volver a calcular");
         document.querySelector("#btn_intercambiar").classList.add("inactive");
         borrar_formulario();
         return;
     }
 
     if (moneda_from_alta != moneda_from_glob) {
-        alert("Has modificado la moneda de origen, debes volver a calcular");
+        activar_alerta("Has modificado la moneda de origen, debes volver a calcular");
         document.querySelector("#btn_intercambiar").classList.add("inactive");
         borrar_formulario();
         return;
     }
 
     if (cantidad_from_alta != cantidad_from_glob) {
-        alert("Has modificado la cantidad de origen, debes volver a calcular");
+        activar_alerta("Has modificado la cantidad de origen, debes volver a calcular");
         document.querySelector("#btn_intercambiar").classList.add("inactive");
         borrar_formulario();
         return;
@@ -212,7 +212,7 @@ function estado_inversion(){
         document.querySelector("#valor_compra").innerHTML = estado_inversion["valor_compra"] + " €"
         document.querySelector("#valor_actual").innerHTML = estado_inversion["valor_actual"] + " €"
     } else {
-        alert("Se ha producido un error en el alta de movimientos")
+        activar_alerta("Se ha producido un error en el alta de movimientos")
     }
 } 
 
@@ -238,27 +238,27 @@ function calcular_movimiento_handler(ev){
     //validamos las respuestas del formulario
 
     if (moneda_from_loc === "") {
-        alert("Debes elegir una moneda");
+        activar_alerta("Debes elegir una moneda");
         return;
     }
 
     if (moneda_to_loc === "") {
-        alert("Debes elegir una moneda");
+        activar_alerta("Debes elegir una moneda");
         return;
     }
 
     if (cantidad_from_loc == 0 || cantidad_from_loc === "") {
-        alert("Debes informar una cantidad distinta de cero");
+        activar_alerta("Debes informar una cantidad distinta de cero");
         return;
     }
 
     if (moneda_from_loc != "EUR" && Number(cantidad_from_loc) > cantidades[moneda_from_loc]) {
-        alert("No tienes suficientes fondos en " + moneda_from_loc + " para realizar la operación");
+        activar_alerta("No tienes suficientes fondos en " + moneda_from_loc + " para realizar la operación");
         return;
     }
 
     if (moneda_from_loc === moneda_to_loc){
-        alert("No puedes intercambiar una moneda por sí misma, selecciona otro destino");
+        activar_alerta("No puedes intercambiar una moneda por sí misma, selecciona otro destino");
         return;
     }
     peticion_movimiento.open("POST", "http://localhost:5000/api/v1.0/tasa", true);
@@ -334,8 +334,17 @@ function cuenta_regresiva(){
     
 }*/
 
+function ocultar_alerta(){
+    document.querySelector("#ocultar").classList.add("inactive");
+}
+
+function activar_alerta(mensaje){
+    document.querySelector("#ocultar").classList.remove("inactive");
+    document.querySelector("#aviso_fallo").innerHTML = mensaje;
+}
+
+
 window.onload = function() {
-    
     cargar_pagina();
     peticion_estado_inversion_handler();
 
@@ -344,4 +353,5 @@ window.onload = function() {
     document.querySelector("#btn_nuevo_movimiento").onclick = estado_boton;
     document.querySelector("#btn_actualizar_cartera").onclick = peticion_estado_inversion_handler;
     document.querySelector("#btn_intercambiar").onclick = altaMovimiento;
+    document.querySelector("#btn_alerta").onclick = ocultar_alerta;
 }
