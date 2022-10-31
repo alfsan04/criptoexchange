@@ -6,11 +6,9 @@
 
 ### 1- Crea un entorno virtual
    * Se recomienda crear un entorno virtual para todo el proceso de instalación y ejecución de la aplicación.
-___
 
 ### 2- Para instalar las dependencias, _"requirements.txt"._
-    pip install -r requirements.txt
-___        
+    pip install -r requirements.txt       
 
 ### 3- Crea una base de datos para registrar movimientos. Usa el fichero  _"/data/create.sql"._
   #### Para hacerlo desde el terminal sigue estos pasos: 
@@ -20,22 +18,19 @@ ___
 
   #### También puedes crearlo directamente en un gestor de bases de datos, como DB Browser SQLite
    * Para ello utiliza la información de creación de tabla de data/create.sql en el directorio de esta aplicación.
-___
 
 ### 4- Obtener una clave para usar la API de coinapi.io
    * Entra en coinapi.io y consigue una api gratuita, te permitirá 100 consultas diarias.
-___
 
 ### 5- Modificación del fichero config_template.py
    * Modificar ORIGIN_DATA -> Añade tu ruta al fichero sqlite
    * Modificar APIKEY -> Introduce tu apikey obtenida en coinapi.io
    * Renombrar el fichero config_template.py por config.py
-___
 
 ### 6- Modificación del fichero .env_template
   * Fija el estado de FLASK_DEBUG como True
   * Renombra el fichero .env_template por .env
-___
+
 ### 7- Activar servidor flask 
    * Utiliza el comando _Flask run_ para activar el servidor local con flask. Recuerda activar el entorno virtual si lo creaste
 
