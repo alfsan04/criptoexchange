@@ -15,9 +15,8 @@
                 Cripto Exchange
             </div>
         </header>
-        <!--Poner sección con visible e invisible un estilo que aparezca en el centro de la pantalla, buscar position, como superponer sobre la pantalla-->
         <section class="container">
-            <h1>
+            <h1 id="titulo_principal">
                 Invierte en cripto y cambia tus criptos
             </h1>
             <section id = "en_paralelo">
@@ -58,13 +57,11 @@
                             <th id="estado_inversion">V. actual:</th>
                             <td id="valor_actual"></td>
                         </tr>
-
                     </table>
                     <button id="btn_actualizar_cartera">Actualizar</button>
                     <button id="btn_nuevo_movimiento">+</button>
                 </article>
             </section>
-            
             <article id="movement_detail" class="inactive">
                 <form id="movement_form">
                     <table style="table-layout:fixed;">
@@ -103,14 +100,12 @@
                         <tr>
                             <td>
                                 <input type="number" name="cantidad_from" id="cantidad_from" step="0.01" placeholder="Cuánto quieres cambiar" required>
-                                
                             <td>
                                 <p id="quantity">Q:</p>
                                 <p id="precio_unitario">P.U.:</p>
                             </td>
                         </tr>
-                        <tr>
-                            
+                        <tr>  
                         </tr>
                     </table>
                     <div class="grid" id="boton_izquierda">

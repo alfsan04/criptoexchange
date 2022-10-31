@@ -13,7 +13,6 @@ var hora = "";
 function peticion_todos_handler(){ //handler se traduce como manejador
     if (this.readyState === 4) {
         if (this.status === 200){
-
             const los_datos = JSON.parse(this.responseText);
             const la_tabla = document.querySelector("#movements_table");
             const cantidad_disponible = document.querySelector("#cantidades_disponibles");
@@ -37,7 +36,6 @@ function peticion_todos_handler(){ //handler se traduce como manejador
                 if (cantidades.hasOwnProperty(item.moneda_to)) {
                     cantidades[item.moneda_to] += item.cantidad_to;
                 }
-                
                 const trow = document.createElement("tr");
                 const tddate = document.createElement("td");
                 const tdtime = document.createElement("td");
@@ -61,7 +59,6 @@ function peticion_todos_handler(){ //handler se traduce como manejador
                 trow.appendChild(tdcantidad_to);
                 la_tabla.appendChild(trow);
             }
-
             for (let i= 0; i<monedas.length; i++) {
                 const trow = document.createElement("tr");
                 const tdmoneda = document.createElement("td");
@@ -69,14 +66,11 @@ function peticion_todos_handler(){ //handler se traduce como manejador
                 if (cantidades[monedas[i]] && cantidades[monedas[i]] != 0) {
                     tdmoneda.innerHTML = monedas[i];
                     tdcantidad.innerHTML = cantidades[monedas[i]].toFixed(8);
-
                     trow.appendChild(tdmoneda);
                     trow.appendChild(tdcantidad);
                 }
-                
                 cantidad_disponible.appendChild(trow);
             }
-
         } else {
             activar_alerta("Se ha producido un error en la consulta de movimientos");
         }
@@ -224,7 +218,6 @@ function estado_boton() {
 
 function calcular_movimiento_handler(ev){
     ev.preventDefault();
-
     const moneda_from_loc = document.querySelector("#moneda_from").value;
     moneda_from_glob = moneda_from_loc;
     const cantidad_from_loc = document.querySelector("#cantidad_from").value;
@@ -274,7 +267,6 @@ function calcular_movimiento(){
 
         document.querySelector("#quantity").innerHTML = "Q: "+calculo_movimiento[5].toFixed(8);
         document.querySelector("#precio_unitario").innerHTML = "P.U: "+calculo_movimiento[6].toFixed(8);
-
         document.querySelector("#aviso_calculo").classList.remove("inactive");
 
     } else {
