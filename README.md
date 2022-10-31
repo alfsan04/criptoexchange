@@ -15,7 +15,7 @@
     sqlite3 Nombre_base_datos.db
     .read data/create.sql
     .q
-
+   * Posiblemente tengas que reubicar el archivo creado dentro de la carpeta data
   #### También puedes crearlo directamente en un gestor de bases de datos, como DB Browser SQLite
    * Para ello utiliza la información de creación de tabla de data/create.sql en el directorio de esta aplicación.
 
@@ -23,9 +23,9 @@
    * Entra en coinapi.io y consigue una api gratuita, te permitirá 100 consultas diarias.
 
 ### 5- Modificación del fichero config_template.py
-   * Modificar ORIGIN_DATA -> Añade tu ruta al fichero sqlite
-   * Modificar APIKEY -> Introduce tu apikey obtenida en coinapi.io
-   * Renombrar el fichero config_template.py por config.py
+   * Modifica la variable ORIGIN_DATA -> Añade tu ruta al fichero sqlite
+   * Modifica la variable APIKEY -> Introduce tu apikey obtenida en coinapi.io
+   * Renombra el fichero config_template.py por config.py
 
 ### 6- Modificación del fichero .env_template
   * Fija el estado de FLASK_DEBUG como True
