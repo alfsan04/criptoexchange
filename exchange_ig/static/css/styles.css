@@ -28,6 +28,10 @@ body {
     margin-top: -100px;
 }
 
+#aviso_intercambio {
+    margin-bottom: 30px;
+}
+
 #boton_izquierda {
     display: grid;
     column-gap: 2%;
@@ -88,5 +92,9 @@ body {
     width: 100%;
     padding: 2rem;
     font-size: 1.3rem;
+}
+
+#aviso_fallo {
+    margin-bottom: 20px;
 }
 
